@@ -2,6 +2,24 @@ extends Node2D
 
 
 
+var unitRef = {
+	"Flier": {
+		"ID": "Flier",
+		"HP": 3,
+		"Move": 3,
+		"Cost": 15,
+		"Specials": ["flying"]
+	},
+	"Infantry": {
+		"ID": "Inf",
+		"HP": 1,
+		"Move": 1,
+		"Cost": 2,
+		"Specials": []
+	}
+}
+
+
 var income = 10
 var expenses = 0
 var treasury = 0
@@ -11,6 +29,22 @@ var cityCount = 0
 
 var mousingOverControl = false
 
+
+func _ready():
+	$UnitStack.addUnit(unitRef["Flier"])
+	$UnitStack.addUnit(unitRef["Flier"])
+	$UnitStack.addUnit(unitRef["Flier"])
+	$UnitStack.addUnit(unitRef["Infantry"])
+	$UnitStack.addUnit(unitRef["Infantry"])
+	$UnitStack.addUnit(unitRef["Infantry"])
+	print ($UnitStack.units)
+	$UnitStack.removeUnit(unitRef["Infantry"])
+	print ($UnitStack.units)
+	$UnitStack.removeUnit(unitRef["Infantry"])
+	print ($UnitStack.units)
+	$UnitStack.removeUnit(unitRef["Infantry"])
+	print ($UnitStack.units)
+	#$UnitStack.
 
 func getCityCount():
 	return cityCount
