@@ -19,3 +19,4 @@ func _input(event):
 	if event.is_action_pressed("esc"):
 		$CanvasLayer/DetailPanel.visible = false
 		$Highlight.visible = false
+		$Grid.genTerrainInSquare(Vector2(10,10))
