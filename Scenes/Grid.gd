@@ -2,7 +2,7 @@ extends TileMap
 
 
 
-
+var selectedTileLoc
 
 
 
@@ -16,12 +16,50 @@ func getTileAtPos(pos):
 	return get_cellv(gridLoc)
 
 
+func isCityLoc(loc):
+	if $ObjectGrid.get_cellv(loc) != -1:
+		return true
+	return false
+
+
+# GET LOC AT POS
+func getLocAtPos(pos):
+	return world_to_map(pos)
+
+
+func buildCity():
+	#print ("BUILDING CITY")
+	var highlight = get_parent().get_node("Highlight")
+	if highlight.visible:
+		#print ("yes")
+		if selectedTileLoc != null:
+			if validCityLocation(selectedTileLoc):
+				if $ObjectGrid.get_cellv(selectedTileLoc) == -1:
+					if get_parent().billTreasury(50):
+						$ObjectGrid.set_cellv(selectedTileLoc, 0)
+						get_parent().addCityByLoc(selectedTileLoc)
+
+
+func validCityLocation(loc):
+	if get_cellv(loc) == -1 || get_cellv(loc) == 1:
+		return false
+	return true
+
+
+func checkHighlightOnGrid(pos):
+	if get_cellv(world_to_map(pos)) != -1:
+		return true
+	return false
+
+
 func placeHighlightAtPos(pos):
+	#if checkHighlightOnGrid(pos):
 	var highlight = get_parent().get_node("Highlight")
 	if highlight.visible == false:
 		highlight.visible = true
 	var gridLoc = world_to_map(pos)
 	highlight.global_position = map_to_world(gridLoc)
+	selectedTileLoc = gridLoc
 	
 
 func genTerrainInSquare(size):
@@ -138,11 +176,11 @@ func spreadTerrain(tile, array):
 	
 	# DOWN
 	if direction == 1:
-		print ("rolled down")
-		print ("Is ", tile, "'s y smaller than the max grid y, ", array.size()-1)
+		#print ("rolled down")
+		#sprint ("Is ", tile, "'s y smaller than the max grid y, ", array.size()-1)
 		if tile.y < array.size()-1:
 			
-			print (array[tile.y+1][tile.x], " at ", tile.y+1, ",", tile.x, " becoming ", array[tile.y][tile.x])
+			#print (array[tile.y+1][tile.x], " at ", tile.y+1, ",", tile.x, " becoming ", array[tile.y][tile.x])
 			
 			array[tile.y+1][tile.x] = array[tile.y][tile.x]
 		#else:
