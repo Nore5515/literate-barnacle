@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Assets/unitStack.png" type="Texture" id=1]
+[ext_resource path="res://Scenes/UnitStack.gd" type="Script" id=2]
+
+[node name="UnitStack" type="Node2D"]
+script = ExtResource( 2 )
+
+[node name="unitStackIcon" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+centered = false
+
+[node name="Amount" type="Label" parent="."]
+modulate = Color( 0, 0, 0, 1 )
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -4.26579
+margin_top = 9.43351
+margin_right = 35.7342
+margin_bottom = 23.4335
+text = "0"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
