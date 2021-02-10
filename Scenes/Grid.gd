@@ -27,6 +27,24 @@ func getLocAtPos(pos):
 	return world_to_map(pos)
 
 
+func getGridPos(pos):
+	var foo = world_to_map(pos)
+	return map_to_world(foo)
+
+
+func isStackAtLoc(loc):
+	print ("Looking for thing at ", loc)
+	for child in $UnitGrid.get_children():
+		print ("\t", child.location)
+		if child.location == loc:
+			return true
+	return false
+
+
+func isStackAtPos(pos):
+	return isStackAtLoc(world_to_map(pos))
+
+
 func buildCity():
 	#print ("BUILDING CITY")
 	var highlight = get_parent().get_node("Highlight")
@@ -37,7 +55,7 @@ func buildCity():
 				if $ObjectGrid.get_cellv(selectedTileLoc) == -1:
 					if get_parent().billTreasury(50):
 						$ObjectGrid.set_cellv(selectedTileLoc, 0)
-						get_parent().addCityByLoc(selectedTileLoc)
+						get_parent().addCityToStructures(selectedTileLoc)
 
 
 func validCityLocation(loc):

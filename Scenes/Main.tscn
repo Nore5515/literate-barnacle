@@ -11,7 +11,7 @@
 [ext_resource path="res://Assets/city.png" type="Texture" id=9]
 [ext_resource path="res://Scenes/UnitStack.tscn" type="PackedScene" id=10]
 
-[sub_resource type="TileSet" id=3]
+[sub_resource type="TileSet" id=1]
 0/name = "plains.png 0"
 0/texture = ExtResource( 3 )
 0/tex_offset = Vector2( 0, 0 )
@@ -75,7 +75,7 @@
 script = ExtResource( 6 )
 
 [node name="Grid" type="TileMap" parent="."]
-tile_set = SubResource( 3 )
+tile_set = SubResource( 1 )
 cell_size = Vector2( 32, 32 )
 cell_custom_transform = Transform2D( 32, 0, 0, 32, 0, 0 )
 format = 1
@@ -158,6 +158,47 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="UnitPanel" type="Panel" parent="CanvasLayer"]
+margin_left = 232.296
+margin_top = -122.0
+margin_right = 453.296
+margin_bottom = 22.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="UnitButton" type="Button" parent="CanvasLayer/UnitPanel"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -20.0
+focus_mode = 0
+enabled_focus_mode = 0
+text = "vvv"
+
+[node name="UnitDetails" type="Label" parent="CanvasLayer/UnitPanel"]
+margin_right = 180.0
+margin_bottom = 14.0
+rect_scale = Vector2( 1.23592, 1.23592 )
+text = "INCOME: +200
+EXPENSES: -177
+NET: +23
+
+TREASURY: 100
+"
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="UnitMoveButton" type="Button" parent="CanvasLayer/UnitPanel"]
+margin_left = 170.041
+margin_top = 98.7916
+margin_right = 217.041
+margin_bottom = 118.792
+mouse_filter = 1
+text = "Move"
+
 [node name="ControlPanel" type="Panel" parent="CanvasLayer"]
 anchor_top = 1.0
 anchor_right = 1.0
@@ -231,6 +272,10 @@ centered = false
 [node name="UnitStack" parent="." instance=ExtResource( 10 )]
 position = Vector2( 232.296, 79.5769 )
 [connection signal="pressed" from="CanvasLayer/EconPanel/EconButton" to="CanvasLayer" method="_on_EconButton_pressed"]
+[connection signal="mouse_entered" from="CanvasLayer/UnitPanel" to="." method="_on_UnitPanel_mouse_entered"]
+[connection signal="mouse_exited" from="CanvasLayer/UnitPanel" to="." method="_on_UnitPanel_mouse_exited"]
+[connection signal="pressed" from="CanvasLayer/UnitPanel/UnitButton" to="CanvasLayer" method="_on_UnitButton_pressed"]
+[connection signal="pressed" from="CanvasLayer/UnitPanel/UnitMoveButton" to="CanvasLayer" method="_on_UnitMoveButton_pressed"]
 [connection signal="mouse_entered" from="CanvasLayer/ControlPanel" to="." method="_on_ControlPanel_mouse_entered"]
 [connection signal="mouse_exited" from="CanvasLayer/ControlPanel" to="." method="_on_ControlPanel_mouse_exited"]
 [connection signal="pressed" from="CanvasLayer/ControlPanel/ControlButton" to="CanvasLayer" method="_on_ControlButton_pressed"]

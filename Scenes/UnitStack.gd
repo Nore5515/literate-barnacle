@@ -1,32 +1,69 @@
 extends Node2D
 
 
-var units = {}
+var units = []
+var location
+
+var slowestMove = -1
+
+
+# SET/GETS
+func setLocation(newLoc) -> void:
+	location = newLoc
+func getLocation() -> Vector2:
+	return location
+
+func getUnitMove(unitID) -> int:
+	for unit in units:
+		if unit.ID == unitID:
+			return unit.move
+	return -1
+
+func getDetails() -> String:
+	updateStats()
+	var txt = ""
+	txt += "STACK of " + String(units.size())
+	txt += "\nSlowest Move: " + String(slowestMove)
+	txt += "\n" + getFormattedUnits()
+	return txt
+
+
+# UNIT ARRAY INTERACTIONS
+func addUnitByRef(newUnitRef) -> void:
+	var unitInstance = load("res://Scripts/Unit.gd").new()
+	unitInstance.genFromRef(newUnitRef)
+	units.append(unitInstance)
+	updateStats()
+
+func removeUnit(newUnit) -> bool:
+	for unit in units:
+		if unit.ID == newUnit.ID:
+			units.erase(unit)
+			updateStats()
+			return true
+	updateStats()
+	return false
+
+func getFormattedUnits() -> String:
+	var txt = ""
+	for unit in units:
+		txt += String(unit.type) + ","
+	return txt
 
 
 
+### OTHER ###
+func updateStats():
+	updateMove()
 
-func addUnit(newUnit):
-	if units.keys().has(newUnit.ID):
-		units[newUnit.ID] += 1
-	else:
-		units[newUnit.ID] = 1
-	updateAmount()
-
-
-func removeUnit(newUnit):
-	if units.keys().has(newUnit.ID):
-		if units[newUnit.ID] == 1:
-			units.erase(newUnit.ID)
+func updateMove():
+	for unit in units:
+		if slowestMove == -1:
+			slowestMove = unit.currentMove
 		else:
-			units[newUnit.ID] -= 1
-	else:
-		assert(false, "ERR; REMOVED UNIT NOT IN STACK")
-	updateAmount()
+			if unit.currentMove < slowestMove:
+				slowestMove = unit.currentMove
 
 
-func updateAmount():
-	var amount = 0
-	#for unitType in units:
-		#amount += unitType
-	$Amount.text = String(amount)
+
+

@@ -2,15 +2,15 @@ extends CanvasLayer
 
 
 var econPanelHidden = true
+var unitPanelHidden = true
 var controlPanelHidden = false
 
 
 func updateDetails(title, desc):
 	if $DetailPanel.visible == false:
 		$DetailPanel.visible = true
-	$DetailPanel/TileName.text = title
+	$DetailPanel/TileName.text = title + String(get_parent().getHighlightedTileLoc())
 	$DetailPanel/TileDetails.text = desc
-
 
 
 
@@ -22,11 +22,13 @@ func _on_EconButton_pressed():
 	else:
 		hideEcon()
 
+
 func revealEcon():
 	updateEconDetails()
 	econPanelHidden = false
 	$EconPanel.rect_position.y = 0
 	$EconPanel/EconButton.text = "^^^"
+
 
 func hideEcon():
 	econPanelHidden = true
@@ -83,3 +85,36 @@ func _on_EndTurnButton_pressed():
 
 func _on_BuildCityButton_pressed():
 	get_parent().buildCityPressed()
+
+
+func _on_UnitButton_pressed():
+	if unitPanelHidden == true:
+		revealUnitPanel()
+	else:
+		hideUnitPanel()
+
+
+func updateUnitDetails():
+	$UnitPanel/UnitDetails.text = String(get_parent().isSelectingTileWithStack())
+	$UnitPanel/UnitDetails.text += "\n"
+	if get_parent().getSelectedStack() != null:
+		$UnitPanel/UnitDetails.text += get_parent().getSelectedStack().getDetails()
+
+
+func revealUnitPanel():
+	updateUnitDetails()
+	unitPanelHidden = false
+	$UnitPanel.rect_position.y = 0
+	$UnitPanel/UnitButton.text = "^^^"
+
+
+func hideUnitPanel():
+	unitPanelHidden = true
+	$UnitPanel.rect_position.y = -122
+	$UnitPanel/UnitButton.text = "vvv"
+
+
+
+
+func _on_UnitMoveButton_pressed():
+	pass # Replace with function body.
