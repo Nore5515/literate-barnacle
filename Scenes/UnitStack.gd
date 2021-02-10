@@ -22,8 +22,8 @@ func getUnitMove(unitID) -> int:
 func getDetails() -> String:
 	updateStats()
 	var txt = ""
-	txt += "STACK of " + String(units.size())
-	txt += "\nSlowest Move: " + String(slowestMove)
+	txt += "Stack of " + String(units.size())
+	txt += "\nSlowest Move: " + String(stepify(slowestMove, 0.01))
 	txt += "\n" + getFormattedUnits()
 	return txt
 
@@ -50,11 +50,21 @@ func getFormattedUnits() -> String:
 		txt += String(unit.type) + ","
 	return txt
 
+func canStackFly() -> bool:
+	for unit in units:
+		if !unit.special.has("flying"):
+			return false
+	return true
 
 
 ### OTHER ###
 func updateStats():
 	updateMove()
+	updateCount()
+	
+	
+func updateCount():
+	$Amount.text = String(units.size())
 
 func updateMove():
 	for unit in units:
@@ -64,6 +74,26 @@ func updateMove():
 			if unit.currentMove < slowestMove:
 				slowestMove = unit.currentMove
 
+func endTurn():
+	#print ("END TURN")
+	slowestMove = -1
+	for unit in units:
+		unit.currentHP = unit.maxHP
+		unit.currentMove = unit.maxMove
+		#print (unit.currentMove)
+	updateStats()
 
+func moveDistance(dist):
+	#print ("Moving distance ", dist)
+	for unit in units:
+		if unit.currentMove >= dist:
+			unit.currentMove -= dist
+		else:
+			assert ("ERR; MOVE FURTHER THAN CURRENT MOVE", true)
+	updateStats()
 
-
+func absorbStack(otherStack):
+	for otherUnit in otherStack.units:
+		units.append(otherUnit)
+	otherStack.queue_free()
+	updateStats()

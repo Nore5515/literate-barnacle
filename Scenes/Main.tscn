@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Scenes/Grid.gd" type="Script" id=1]
 [ext_resource path="res://Assets/woods.png" type="Texture" id=2]
@@ -9,7 +9,6 @@
 [ext_resource path="res://Scenes/CanvasLayer.gd" type="Script" id=7]
 [ext_resource path="res://Assets/Highlight.png" type="Texture" id=8]
 [ext_resource path="res://Assets/city.png" type="Texture" id=9]
-[ext_resource path="res://Scenes/UnitStack.tscn" type="PackedScene" id=10]
 
 [sub_resource type="TileSet" id=1]
 0/name = "plains.png 0"
@@ -198,6 +197,9 @@ margin_right = 217.041
 margin_bottom = 118.792
 mouse_filter = 1
 text = "Move"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="ControlPanel" type="Panel" parent="CanvasLayer"]
 anchor_top = 1.0
@@ -263,14 +265,21 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="MovingUnitLabel" type="Label" parent="CanvasLayer"]
+visible = false
+margin_top = 219.124
+margin_right = 40.0
+margin_bottom = 233.124
+text = "Moving Unit!"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Highlight" type="Sprite" parent="."]
 visible = false
 position = Vector2( 336.103, 107.685 )
 texture = ExtResource( 8 )
 centered = false
-
-[node name="UnitStack" parent="." instance=ExtResource( 10 )]
-position = Vector2( 232.296, 79.5769 )
 [connection signal="pressed" from="CanvasLayer/EconPanel/EconButton" to="CanvasLayer" method="_on_EconButton_pressed"]
 [connection signal="mouse_entered" from="CanvasLayer/UnitPanel" to="." method="_on_UnitPanel_mouse_entered"]
 [connection signal="mouse_exited" from="CanvasLayer/UnitPanel" to="." method="_on_UnitPanel_mouse_exited"]

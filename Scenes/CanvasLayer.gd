@@ -6,6 +6,7 @@ var unitPanelHidden = true
 var controlPanelHidden = false
 
 
+
 func updateDetails(title, desc):
 	if $DetailPanel.visible == false:
 		$DetailPanel.visible = true
@@ -76,7 +77,23 @@ func unitButtonToggle(setting):
 		$ControlPanel/BuyFlierButton.disabled = true
 		$ControlPanel/BuyInfButton.disabled = true
 
-##############
+# GIVE CITY TYPE 
+# IF CITY TYPE == "" THEN DISABLE ALL UNIT BUTTONS
+# OTHERWISE SET BUTTONS BASED ON TYPE
+######################################
+# "Woods" - Inf and Fliers
+# "Plains" - Inf
+######################################
+func unitButtonsAdjust(cityType: String) -> void:
+	if cityType == "":
+		$ControlPanel/BuyFlierButton.disabled = true
+		$ControlPanel/BuyInfButton.disabled = true
+	elif cityType == "Woods":
+		$ControlPanel/BuyFlierButton.disabled = false
+		$ControlPanel/BuyInfButton.disabled = false
+	elif cityType == "Plains":
+		$ControlPanel/BuyFlierButton.disabled = true
+		$ControlPanel/BuyInfButton.disabled = false
 
 
 func _on_EndTurnButton_pressed():
@@ -114,7 +131,5 @@ func hideUnitPanel():
 	$UnitPanel/UnitButton.text = "vvv"
 
 
-
-
 func _on_UnitMoveButton_pressed():
-	pass # Replace with function body.
+	get_parent().moveUnitPressed()

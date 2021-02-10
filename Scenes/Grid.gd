@@ -123,9 +123,9 @@ func genTerrainSourceArray(size, array):
 		terrainRow = []
 		for x in range (size.x):
 			roll = rand_range(0,100)
-			if roll < 10:
+			if roll < 2:
 				terrainRow.append("Forest")
-			elif roll < 12 + noWaterLuck:
+			elif roll < 3 + noWaterLuck:
 				terrainRow.append("Water")
 				noWater = false
 				noWaterLuck = 0
@@ -147,7 +147,7 @@ func expandTerrainSources(array):
 		for x in range (array[0].size()):
 			if array[y][x] != "Nada":
 				if array[y][x] == "Forest":
-					callSpreadUntilExhausted(Vector2(x,y), array, 20)
+					callSpreadUntilExhausted(Vector2(x,y), array, 10)
 				elif array[y][x] == "Water":
 					callSpreadUntilExhausted(Vector2(x,y), array, 10)
 			else:
