@@ -7,7 +7,7 @@ var unitRef = {
 	"Flier": {
 		"type": "Flier",
 		"hp": 3,
-		"move": 3,
+		"move": 8,
 		"cost": 15,
 		"special": ["flying"]
 	},
