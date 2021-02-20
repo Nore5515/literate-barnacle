@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://Scenes/Grid.gd" type="Script" id=1]
 [ext_resource path="res://Assets/woods.png" type="Texture" id=2]
@@ -9,6 +9,7 @@
 [ext_resource path="res://Scenes/CanvasLayer.gd" type="Script" id=7]
 [ext_resource path="res://Assets/Highlight.png" type="Texture" id=8]
 [ext_resource path="res://Assets/city.png" type="Texture" id=9]
+[ext_resource path="res://Scenes/StackManager.gd" type="Script" id=10]
 
 [sub_resource type="TileSet" id=1]
 0/name = "plains.png 0"
@@ -97,6 +98,7 @@ script = ExtResource( 5 )
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 script = ExtResource( 7 )
+stackManagerPath = NodePath("../StackManager")
 
 [node name="DetailPanel" type="Panel" parent="CanvasLayer"]
 visible = false
@@ -265,6 +267,18 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="BuyFarmButton" type="Button" parent="CanvasLayer/ControlPanel"]
+margin_left = 635.078
+margin_top = 36.5651
+margin_right = 708.078
+margin_bottom = 56.5651
+rect_scale = Vector2( 1.64424, 1.64424 )
+mouse_filter = 1
+text = "Buy Farm"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="MovingUnitLabel" type="Label" parent="CanvasLayer"]
 visible = false
 margin_top = 219.124
@@ -280,6 +294,10 @@ visible = false
 position = Vector2( 336.103, 107.685 )
 texture = ExtResource( 8 )
 centered = false
+
+[node name="StackManager" type="Node" parent="."]
+script = ExtResource( 10 )
+canvasLayerPath = NodePath("../CanvasLayer")
 [connection signal="pressed" from="CanvasLayer/EconPanel/EconButton" to="CanvasLayer" method="_on_EconButton_pressed"]
 [connection signal="mouse_entered" from="CanvasLayer/UnitPanel" to="." method="_on_UnitPanel_mouse_entered"]
 [connection signal="mouse_exited" from="CanvasLayer/UnitPanel" to="." method="_on_UnitPanel_mouse_exited"]
@@ -292,3 +310,4 @@ centered = false
 [connection signal="pressed" from="CanvasLayer/ControlPanel/BuildCityButton" to="CanvasLayer" method="_on_BuildCityButton_pressed"]
 [connection signal="pressed" from="CanvasLayer/ControlPanel/BuyInfButton" to="." method="_on_BuyInfButton_pressed"]
 [connection signal="pressed" from="CanvasLayer/ControlPanel/BuyFlierButton" to="." method="_on_BuyFlierButton_pressed"]
+[connection signal="pressed" from="CanvasLayer/ControlPanel/BuyFarmButton" to="CanvasLayer" method="_on_BuyFarmButton_pressed"]

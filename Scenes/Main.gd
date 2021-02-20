@@ -30,11 +30,6 @@ var treasury = 110
 var allStructures = []
 var cityCount = 0
 
-# Units
-var stacks = []
-var movingStack = false
-var savedStack
-
 # Other
 var mousingOverControl = false
 var mousingOverUnitPanel = false
@@ -48,14 +43,7 @@ func getCityCount() -> int:
 func setCityCount(_cityCount) -> void:
 	cityCount = _cityCount
 
-# Check the highlighted tile for any stacks
-# Return the first stack found
-func getSelectedStack():
-	var highlightLoc = $Grid.getLocAtPos($Highlight.global_position)
-	for stack in stacks:
-		if stack.location == highlightLoc:
-			return stack
-	return null
+
 
 # Check the highlighted tile for any cities
 # Return the first city found
@@ -75,7 +63,7 @@ func getHighlightedTileLoc():
 
 
 func _ready():
-	isSelectingTileWithStack()
+	$StackManager.isSelectingTileWithStack()
 	var u = load("res://Scripts/Unit.gd").new()
 	u.type = "Inf"
 	u.randomizeID()
@@ -86,52 +74,7 @@ func _ready():
 ### OTHER
 
 
-# Begin moving unit.
-func moveUnitPressed() -> void:
-	#print ("Move Unit Pressed...")
-	if savedStack == null:
-		#print ("Saving Stack.")
-		if isSelectingTileWithStack():
-			savedStack = getSelectedStack()
-			movingStack = true
-			$CanvasLayer/MovingUnitLabel.visible = true
-			$CanvasLayer/UnitPanel/UnitMoveButton.disabled = true
-	else:
-		#print ("Moving and Clearing Stack.")
-		moveStackToSelected(savedStack)
-		$CanvasLayer/UnitPanel/UnitMoveButton.disabled = true
-		movingStack = false
-		$CanvasLayer/MovingUnitLabel.visible = false
-		savedStack = null
-	$CanvasLayer.updateUnitDetails()
 
-# Moves the given stack to the currently highlighted tile
-# If there is a friendly stack on the tile, merge
-func moveStackToSelected(stack) -> bool:
-	#print ("MOVE STACK TO SELECTED")
-	if stacks.has(stack):
-		if isSelectingTileWithStack():
-			stacks.erase(stack)
-			getSelectedStack().absorbStack(stack)
-		var loc = getHighlightedTileLoc()
-		stack.moveDistance(getStackDistanceTo(stack, loc))
-		stack.location = loc
-		stack.position = $Grid.map_to_world(loc)
-		return true
-	else:
-		return false
-	$CanvasLayer.updateUnitDetails()
-
-# PRE: You are selecting a tile that does not have a stack on it.
-# POST: There is now an empty stack on that tile.
-func addEmptyStackToSelected(): # -> UnitStack.tscn
-	var instance = load("res://Scenes/UnitStack.tscn").instance()
-	var loc = getHighlightedTileLoc()
-	$Grid/UnitGrid.add_child(instance)
-	instance.position = $Grid.map_to_world(loc)
-	instance.location = loc
-	stacks.append(instance)
-	return instance
 
 # PRE: None.
 # POST: Adds a key to "allStructures" called "City " + cityCount.
@@ -157,34 +100,8 @@ func updateDetails(givenTile):
 		$CanvasLayer.updateDetails("Invalid", "This is not a tile.")
 
 
-func canSavedStackMoveToSelected() -> bool:
-	var rangeCheck = false
-	var terrainCheck = false
-	
-	var loc = getHighlightedTileLoc()
-	var slowestMove = savedStack.slowestMove
-	
-	var distanceTo = getStackDistanceTo(savedStack, loc)
-	if distanceTo <= slowestMove:
-		rangeCheck = true
-	
-	var tile = $Grid.get_cellv(loc)
-	if tile >= 0:
-		if savedStack.canStackFly():
-			terrainCheck = true
-		else:
-			if tile != 1:
-				terrainCheck = true
-
-	if rangeCheck && terrainCheck:
-		#print ("YES")
-		return true
-	#print ("NO")
-	return false
 
 
-func getStackDistanceTo(stack, loc) -> float:
-	return loc.distance_to(stack.location)
 
 
 func _input(event):
@@ -194,20 +111,20 @@ func _input(event):
 			updateDetails(response)
 			$Grid.placeHighlightAtPos(get_global_mouse_position())
 			
-			if isSelectingTileWithStack():
+			if $StackManager.isSelectingTileWithStack():
 				$CanvasLayer.updateUnitDetails()
 			
-			if !movingStack:
+			if !$StackManager.movingStack:
 				$CanvasLayer.updateUnitDetails()
 				
-				if isSelectingTileWithStack():
+				if $StackManager.isSelectingTileWithStack():
 					$CanvasLayer/UnitPanel/UnitMoveButton.disabled = false
 				else:
 					$CanvasLayer/UnitPanel/UnitMoveButton.disabled = true
 					
 				
 			else:
-				$CanvasLayer/UnitPanel/UnitMoveButton.disabled = !canSavedStackMoveToSelected()
+				$CanvasLayer/UnitPanel/UnitMoveButton.disabled = !$StackManager.canSavedStackMoveToSelected()
 
 			if isSelectingCity():
 				if response == 0:
@@ -224,8 +141,8 @@ func _input(event):
 	if event.is_action_pressed("esc"):
 		$CanvasLayer/DetailPanel.visible = false
 		$Highlight.visible = false
-		movingStack = false
-		savedStack = null
+		$StackManager.movingStack = false
+		$StackManager.savedStack = null
 		$CanvasLayer/MovingUnitLabel.visible = false
 		#$Grid.genTerrainInSquare(Vector2(30,30))
 
@@ -234,7 +151,7 @@ func endTurn():
 	treasury += income
 	treasury -= expenses
 	updateAll()
-	for stack in stacks:
+	for stack in $StackManager.stacks:
 		stack.endTurn()
 
 
@@ -262,32 +179,27 @@ func isSelectingCity():
 	return false
 
 
-func isSelectingTileWithStack():
-	var highlightLoc = $Grid.getLocAtPos($Highlight.global_position)
-	for stack in stacks:
-		if stack.location == highlightLoc:
-			return true
-	return false
+
 
 
 # Add an inf unit to the selected stack
 # If no stacks present create an empty stack and add 1 inf
 func _on_BuyInfButton_pressed():
 	if billTreasury(unitRef["Inf"].cost):
-		if !isSelectingTileWithStack():
-			addEmptyStackToSelected()
-		if getSelectedStack() != null:
-			getSelectedStack().addUnitByRef(unitRef["Inf"])
+		if !$StackManager.isSelectingTileWithStack():
+			$StackManager.addEmptyStackToSelected()
+		if $StackManager.getSelectedStack() != null:
+			$StackManager.getSelectedStack().addUnitByRef(unitRef["Inf"])
 		$CanvasLayer.updateUnitDetails()
 
 # Add a Flier unit to the selected stack
 # If no stacks present create an empty stack and add 1 Flier
 func _on_BuyFlierButton_pressed():
 	if billTreasury(unitRef["Flier"].cost):
-		if !isSelectingTileWithStack():
-			addEmptyStackToSelected()
-		if getSelectedStack() != null:
-			getSelectedStack().addUnitByRef(unitRef["Flier"])
+		if !$StackManager.isSelectingTileWithStack():
+			$StackManager.addEmptyStackToSelected()
+		if $StackManager.getSelectedStack() != null:
+			$StackManager.getSelectedStack().addUnitByRef(unitRef["Flier"])
 		$CanvasLayer.updateUnitDetails()
 
 

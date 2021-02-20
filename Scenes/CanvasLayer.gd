@@ -6,6 +6,14 @@ var unitPanelHidden = true
 var controlPanelHidden = false
 
 
+var stackManager
+export (NodePath) var stackManagerPath
+
+
+
+func _ready():
+	stackManager = get_node(stackManagerPath)
+
 
 func updateDetails(title, desc):
 	if $DetailPanel.visible == false:
@@ -112,10 +120,10 @@ func _on_UnitButton_pressed():
 
 
 func updateUnitDetails():
-	$UnitPanel/UnitDetails.text = String(get_parent().isSelectingTileWithStack())
+	$UnitPanel/UnitDetails.text = String(stackManager.isSelectingTileWithStack())
 	$UnitPanel/UnitDetails.text += "\n"
-	if get_parent().getSelectedStack() != null:
-		$UnitPanel/UnitDetails.text += get_parent().getSelectedStack().getDetails()
+	if stackManager.getSelectedStack() != null:
+		$UnitPanel/UnitDetails.text += stackManager.getSelectedStack().getDetails()
 
 
 func revealUnitPanel():
@@ -132,4 +140,8 @@ func hideUnitPanel():
 
 
 func _on_UnitMoveButton_pressed():
-	get_parent().moveUnitPressed()
+	stackManager.moveUnitPressed()
+
+
+func _on_BuyFarmButton_pressed():
+	print ("Farm time!")
