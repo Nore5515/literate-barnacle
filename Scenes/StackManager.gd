@@ -86,10 +86,14 @@ func moveUnitPressed() -> void:
 # Moves the given stack to the currently highlighted tile
 # If there is a friendly stack on the tile, merge
 func moveStackToSelected(stack) -> bool:
-	#print ("MOVE STACK TO SELECTED")
-	if stack.location != stack.location:
+	print ("MOVE STACK TO SELECTED")
+	# FIX THIS
+	if stack.location != get_parent().getHighlightedTileLoc():
+		print ("A")
 		if stacks.has(stack):
+			print ("B")
 			if isSelectingTileWithStack():
+				print ("C")
 				stacks.erase(stack)
 				getSelectedStack().absorbStack(stack)
 			var loc = get_parent().getHighlightedTileLoc()

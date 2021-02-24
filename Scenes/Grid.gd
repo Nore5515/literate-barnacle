@@ -3,7 +3,7 @@ extends TileMap
 
 
 var selectedTileLoc
-
+var mapSize
 
 
 func _ready():
@@ -17,7 +17,7 @@ func getTileAtPos(pos):
 
 
 func isCityLoc(loc):
-	if $ObjectGrid.get_cellv(loc) != -1:
+	if $ObjectGrid.get_cellv(loc) == 0:
 		return true
 	return false
 
@@ -58,6 +58,44 @@ func buildCity():
 						get_parent().addCityToStructures(selectedTileLoc)
 
 
+func buildFarm():
+	var highlight = get_parent().get_node("Highlight")
+	if highlight.visible:
+		if selectedTileLoc != null:
+			if validFarmLocation(selectedTileLoc):
+				if $ObjectGrid.get_cellv(selectedTileLoc) == -1:
+					if get_parent().billTreasury(10):
+						$ObjectGrid.set_cellv(selectedTileLoc, 1)
+						get_parent().addFarmToStructures(selectedTileLoc)
+
+
+func validFarmLocation(loc):
+	# Can only be built on plains.
+	if get_cellv(loc) != 0:
+		return false
+	
+	var tile
+	# Can only be built adjacent to either a city or another farm.
+	if loc.x > 0:
+		tile = $ObjectGrid.get_cellv(Vector2(loc.x-1, loc.y))
+		if tile == 0 || tile == 1:
+			return true
+	if loc.x < mapSize.x-1:
+		tile = $ObjectGrid.get_cellv(Vector2(loc.x+1, loc.y))
+		if tile == 0 || tile == 1:
+			return true
+	if loc.y > 0:
+		tile = $ObjectGrid.get_cellv(Vector2(loc.x, loc.y-1))
+		if tile == 0 || tile == 1:
+			return true
+	if loc.y < mapSize.y-1:
+		tile = $ObjectGrid.get_cellv(Vector2(loc.x, loc.y+1))
+		if tile == 0 || tile == 1:
+			return true
+			
+	return false
+
+
 func validCityLocation(loc):
 	if get_cellv(loc) == -1 || get_cellv(loc) == 1:
 		return false
@@ -78,7 +116,7 @@ func placeHighlightAtPos(pos):
 	var gridLoc = world_to_map(pos)
 	highlight.global_position = map_to_world(gridLoc)
 	selectedTileLoc = gridLoc
-	
+
 
 func genTerrainInSquare(size):
 	var terrainArray = genTerrainArray(size)
@@ -117,6 +155,8 @@ func genTerrainSourceArray(size, array):
 	
 	var noWater = true
 	var noWaterLuck = 0
+	
+	mapSize = size
 	
 	# Create Terrain Sources
 	for y in range (size.y):

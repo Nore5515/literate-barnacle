@@ -29,6 +29,7 @@ var treasury = 110
 # Structures
 var allStructures = []
 var cityCount = 0
+var farmCount = 0
 
 # Other
 var mousingOverControl = false
@@ -83,8 +84,20 @@ func addCityToStructures(cityLoc) -> void:
 		"City " + String (cityCount): cityLoc
 	})
 	cityCount += 1
+	updateEcon()
 	$CanvasLayer.updateEconDetails()
 
+func addFarmToStructures(farmLoc) -> void:
+	allStructures.append({
+		"Farm " + String (farmCount): farmLoc
+	})
+	farmCount += 1
+	updateEcon()
+	$CanvasLayer.updateEconDetails()
+
+
+func updateEcon() -> void:
+	income = 10 + farmCount * 2
 
 
 # PRE: You're giving it a selected tile's ID
@@ -162,6 +175,8 @@ func updateAll():
 func buildCityPressed():
 	$Grid.buildCity()
 
+func buildFarmPressed():
+	$Grid.buildFarm()
 
 func billTreasury(amount):
 	if treasury >= amount:

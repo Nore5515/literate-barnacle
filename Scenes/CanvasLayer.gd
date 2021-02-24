@@ -145,3 +145,4 @@ func _on_UnitMoveButton_pressed():
 
 func _on_BuyFarmButton_pressed():
 	print ("Farm time!")
+	get_parent().buildFarmPressed()
